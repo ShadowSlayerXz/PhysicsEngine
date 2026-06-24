@@ -8,11 +8,12 @@
 using namespace std;
 
 constexpr signed int isNegativeGravity = -1; // -1 for negative gravity, 1 for positive gravity
-constexpr float GRAVITY = isNegativeGravity * 9.81f;
+constexpr float GRAVITY =   9.81f;
 constexpr float RESTITUTION = 0.8f;
 constexpr float DT = 1.0f / 480.0f;
 constexpr unsigned int WINDOW_WIDTH = 1000u;
 constexpr unsigned int WINDOW_HEIGHT = 800u;
+
 
 struct vector2
 {
@@ -28,6 +29,8 @@ struct Particle
     float radius;
 };
 
+std::vector<Particle> particles;
+
 int main()
 {
     // Create a window for rendering 
@@ -40,6 +43,9 @@ int main()
     ball.velocity = { 0.0f, 0.0f };
     ball.mass = 1.0f;
     ball.radius = 5.0f;
+
+    particles.reserve(1000); // Reserve space for 1000 particles
+    particles.push_back(ball); // Add the ball to the particles vector
 
     //Create a circle shape to represent the ball visually
     sf::CircleShape ballshape(ball.radius);
@@ -63,14 +69,24 @@ int main()
             {
                 window.close();
             }
+			// Mouse button pressed event
+			else if (event->is<sf::Event::MouseButtonPressed>())
+			{
+				auto mouseEvent = event->getIf<sf::Event::MouseButtonPressed>;
+				cout << "Mouse button pressed at position: [" << mouseEvent.position.x << ", " << mouseEvent.position.y << "]" << endl;
+			}
+
         }
 
         // Physics simulation loop
-        ball.velocity.y += GRAVITY * DT;
-
-
-        ball.position.x += ball.velocity.x * DT;
-        ball.position.y += ball.velocity.y * DT;
+		for (auto& particle : particles)
+		{
+			// Update velocity based on gravity
+			particle.velocity.y += isNegativeGravity * GRAVITY * DT;
+			// Update position based on velocity
+			particle.position.x += particle.velocity.x * DT;
+			particle.position.y += particle.velocity.y * DT;
+		}
 
         // Check for collision with the ground
         if (ball.position.y + ball.radius >= WINDOW_HEIGHT)
@@ -101,8 +117,11 @@ int main()
 		}
 
 
-        //sync the visual representation with the particle's position
-        ballshape.setPosition(sf::Vector2f(ball.position.x, ball.position.y));
+        //sync the visual representation with the particle's position   
+		for (const auto& particle : particles)
+		{
+			ballshape.setPosition(sf::Vector2f(particle.position.x, particle.position.y));
+		}
 
         logTimer += DT;
         if (logTimer >= 1.0f && ball.position.y + ball.radius <= WINDOW_HEIGHT)
