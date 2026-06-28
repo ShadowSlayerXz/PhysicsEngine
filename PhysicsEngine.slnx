@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="PhysicsEngine/PhysicsEngine.vcxproj" />
+  <Project Path="PhysicsEngine/PhysicsEngine.vcxproj" Id="dc43f615-e177-4260-b838-e0c8a29b9f1b" />
 </Solution>

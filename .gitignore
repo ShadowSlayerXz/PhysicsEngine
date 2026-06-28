@@ -364,3 +364,6 @@ FodyWeavers.xsd
 
 #personal documents
 docs/
+
+# Claude AI instructions
+CLAUDE.md
